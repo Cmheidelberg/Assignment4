@@ -12,7 +12,7 @@ import com.google.gson.JsonSyntaxException;
 
 public class StockHelper {
 
-	final static String token = "60256dad4eceb5c84ceb9b25f5ca3ec5d9ca278e";
+	final static String token = "";
 	
 	public Stock getStockFromApi(String ticker) {
 		
