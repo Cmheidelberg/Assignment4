@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<script>
+	function specialPages(idname)
+	{
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open( "GET", "LoginCookie", false );
+	    xmlHttp.send( null );
+	    if(xmlHttp.responseText != "none") {
+	    	document.getElementById(idname).innerHTML= "<a href=\"/cheidelb_CSCI201L_Assignment4/" +
+	    	idname.toLowerCase()+ ".html\">"+idname+"</a>";
+	    }
+	    return xmlHttp.responseText;
+	}
+	
+	function checkLoginStatus() {
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open( "GET", "LoginCookie", false );
+	    xmlHttp.send( null );
+	    if(xmlHttp.responseText == "none") {
+	    	document.getElementById("login").innerHTML= "Login/Sign Up";
+	    	document.getElementById("login").href = "/cheidelb_CSCI201L_Assignment4/login.html";
+	    } else {
+	    	document.getElementById("login").innerHTML= "Logout";
+	    	document.getElementById("login").href = "/cheidelb_CSCI201L_Assignment4/search.html";
+	    }
+	    return xmlHttp.responseText;
+	}
+	
+	function loginPage() {
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open( "GET", "LoginCookie", false );
+	    xmlHttp.send( null );
+	    if(xmlHttp.responseText == "none") {
+	    	document.getElementById("login").innerHTML= "Login/Sign Up";
+	    	document.getElementById("login").href = "/cheidelb_CSCI201L_Assignment4/login.html";
+	    } else {
+	    	logout();
+	    	document.getElementById("login").href = "/cheidelb_CSCI201L_Assignment4/search.html";
+	    }
+	    return xmlHttp.responseText;
+	}
+	
+	function logout() {
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open( "GET", "Logout", false );
+	    xmlHttp.send(null);
+	    return xmlHttp.responseText;
+	}
+	
+	function selectedcss() {
+		var fullpathname = window.location.pathname;
+		var filename = fullpathname.replace(/^.*[\\\/]/, '');
+		var css = "padding: 8px 3px;border: 1.5px solid #fff;border-radius: 10px;"
+		
+		if(filename == "search.html") {
+			document.getElementById("custom-selected").innerHTML = "#Home {"+css+"}";
+		} else if(filename == "login.html") {
+			document.getElementById("custom-selected").innerHTML = "#Login {"+css+"}";
+		} else if(filename == "profile.html") {
+			document.getElementById("custom-selected").innerHTML = "#Profile {"+css+"}";
+		} else if(filename == "favorites.html") {
+			document.getElementById("custom-selected").innerHTML = "#Favorites {"+css+"}";
+		}
+		
+	}
+
+</script>
+
+<style>
+nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 15px;
+  overflow: hidden;
+  background-color: #6856f2;
+}
+
+#right-logo a{
+  float: left;
+  font-weight: bold;
+  font-size: 20px;
+  color: #FFF;
+  text-decoration: none;
+}
+
+#topoptions {
+  float: right;
+}
+
+#topoptions a{
+  color: #b0a5f8;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  }
+
+</style>
+
+	
+	<script>checkLoginStatus();</script>
+	<script>specialPages('Profile');</script>
+	<script>specialPages('Favorites');</script>
+	<script>selectedcss();</script>
+	
+	<style id="custom-selected"></style>
+	
+	
+	<nav>	
+		<div id="right-logo"><a href="/cheidelb_CSCI201L_Assignment4/search.html">SalStocks</a></div>
+		<div id="topoptions">
+			<span id="Home"><a href="/cheidelb_CSCI201L_Assignment4/search.html">Home/Search</a></span>
+			<span id="Profile"></span>
+			<span id="Favorites"></span> 
+			<span id="Login"><a id="login" href="" onclick="loginPage();"></a></span>
+		</div>
+	</nav>
+

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Sal Stocks</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<script>
+	function navbar(){
+		  $("#nav-bar").load("nav.html");
+	}
+
+	function getBalance() {
+		var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open("GET", "GetBalance", true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (xmlHttp.responseText != "none") {
+	    			document.getElementById('user-balance').innerHTML = "Account Balance: " + xmlHttp.responseText;
+	    			return xmlHttp.responseText;
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	function readAccountValue() {
+		return -1;
+	}
+	
+	function purchase(ticker) {
+		var quantity = document.getElementById('quantity-'+ticker).value;
+		if (quantity > 0) {
+			var xmlHttp = new XMLHttpRequest();
+	        var ele = document.getElementsByName('bs');
+	        var bs = "";
+	        for(i = 0; i < ele.length; i++) {
+	            if(ele[i].checked)
+	            	bs =  ele[i].value;
+	        }
+	    	xmlHttp.open("GET", "Purchase?buysell=" + bs +"&quantity="+ quantity + "&ticker=" + ticker, true );
+	    	xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		    xmlHttp.onreadystatechange = function() {
+		    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		    		if (xmlHttp.responseText == "done") {
+		    			location.reload();
+		    		} else if(xmlHttp.responseText == "invalid") {
+		    			alert("invalid purchase");
+		    		}
+		    	}
+		    }
+		    xmlHttp.send();
+		} else {
+			alert("Invalit purchase quantity");
+		}
+	}
+	
+	
+	function drawCards() {
+		var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open("GET", "GetPortfolio", true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (xmlHttp.responseText != "none") {
+	    			document.getElementById('port-cards').innerHTML = xmlHttp.responseText;
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+		
+</script>
+
+<style>
+
+	body { 
+	  margin:0px; 
+	  padding:0px;
+	}
+	
+	#my-portfolio {
+	  margin: auto;
+	  width: 60%;
+	  padding: 1px;
+	  font-family: Sans-serif;
+	}
+	
+	.outer-card {
+		border-style: solid;
+		border-radius: 5px;
+		border-color: grey;
+		background-color: #f9f9f9;
+	}
+	
+	.card-body {
+        border-top: 1.5px solid grey;
+        border-bottom:  1.5px solid grey;
+		background-color: white;
+	}
+	
+    p {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .card-body {
+        line-height: .7;
+    }
+	
+	.card-footer {
+		text-align: center;
+	}
+	
+</style>
+</head>
+<body onload="navbar();">
+
+	<div id="nav-bar"></div>
+
+	<div id="my-portfolio">
+		
+		<h1>My Portfolio</h1>
+		<script>getBalance();</script>
+		<script>drawCards();</script>
+		
+		<div id="user-balance">Account Balance: loading</div>
+		<div id="user-account-value">Total Account Value: loading</div>
+	
+		<div id="port-cards">Loading...</div>
+	</div>
+</body>
+</html>

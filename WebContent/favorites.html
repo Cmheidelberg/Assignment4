@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Sal Stocks</title>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script>
+	
+	function navbar(){
+		  $("#nav-bar").load("nav.html");
+	}
+
+	function removeFavoriteStock(tickerName) {
+		var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open("GET", "RemoveFavorites?ticker=" + tickerName, true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (xmlHttp.responseText == "done") {
+	    			document.getElementById('field-'+tickerName.toLowerCase()).innerHTML = "";
+	    			document.getElementById('br-'+tickerName.toLowerCase()).innerHTML = "";
+	    		} else {
+	    			alert("Error removing stock from favorites. Please try again later");
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	function getFavorites() {
+		var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open("GET", "GetFavorites?", true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (this.responseText != "none") {
+	    			document.getElementById('favorites').innerHTML = this.responseText;
+	    		} else {
+	    			alert("Currently you dont have any stock in your favorites");
+	    			document.getElementById('favorites').innerHTML = "";
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	function getCardInfo(ticker) {
+		var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open("GET", "SearchStock?searchstock=" + ticker + "&forceguest=true", true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (this.responseText != "none") {
+	    			document.getElementById('field-'+ticker).innerHTML = "<fieldset style=\"border-color: light-grey; border-radius: 5px;\">" + this.responseText + "</fieldset>";
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	function purchase(ticker) {
+		var quantity = document.getElementById('quantity-'+ticker).value;
+		if (quantity > 0) {
+			var xmlHttp = new XMLHttpRequest();
+
+	    	xmlHttp.open("GET", "Purchase?buysell=buy&quantity="+ quantity + "&ticker=" + ticker, true );
+	    	xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		    xmlHttp.onreadystatechange = function() {
+		    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		    		if (xmlHttp.responseText == "done") {
+		    			alert("Success");
+		    		} else if(xmlHttp.responseText == "invalid") {
+		    			alert("invalid purchase");
+		    		}
+		    	}
+		    }
+		    xmlHttp.send();
+		} else {
+			alert("Invalid purchase quantity");
+		}
+	}
+
+</script>
+<style>
+	body { 
+	  margin:0px; 
+	  padding:0px;
+	}
+	
+	.page {
+		margin: auto;
+	 	width: 60%;
+		padding: 10px;
+		font-family: Sans-serif;
+	}
+	
+	.left-info {
+		float: left;
+	}
+	
+	.right-info {
+		float: right;
+		text-align: right;
+	}
+	
+       a:link {color: black;}      /* unvisited link */
+       a:visited {color: black;}   /* visited link */
+       a:hover {color: black;}     /* mouse over link */
+       a:active {color: black;} 
+	
+	.exitbutton {
+		background: transparent;
+		color: black;
+		border: none;
+		font-size: 15px;
+		float: right;
+		color: grey;
+	}
+</style>
+</head>
+<body onload="navbar();getFavorites();">
+
+	<div id="nav-bar"></div>
+	
+	<div class="page">
+	<h1>My Favorites</h1>
+	
+	<div id="favorites">Loading...</div>
+	</div>
+	
+</body>
+</html>

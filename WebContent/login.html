@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+	
+	//Load the top navbar
+	function navbar(){
+		  $("#nav-bar").load("nav.html");
+	}
+	
+	//Confirm both password firlds on sign up match
+	function verifyMatch() {
+		if(document.getElementById('conf_subm_pwd').value && document.getElementById('subm_pwd').value) {
+			if (document.getElementById('subm_pwd').value == document.getElementById('conf_subm_pwd').value) {
+				
+				document.getElementById('message').style.color = 'green';
+				document.getElementById('message').innerHTML = '(matches)';
+				return true;
+			} else {
+		  		document.getElementById('message').style.color = 'red';
+				document.getElementById('message').innerHTML = '(Password must match)';
+				return false;
+			}
+		}
+		
+		document.getElementById('message').innerHTML = '';
+		return false;
+	}
+	
+	
+	//Call login servlet and redirect to homepage if valid. Else display invalid login msg
+	function loginJs(uname,pwd){
+		document.getElementById('invalid_login').innerHTML = "";
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open("POST", "Login?uname=" + document.getElementById(uname).value + "&pwd=" + document.getElementById(pwd).value, true );
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (xmlHttp.responseText) {
+			    	if(this.responseText == "valid") {
+			    		location.href = 'search.html';
+			    	} else {
+		    			document.getElementById('invalid_login').style.color = 'red';
+				    	document.getElementById('invalid_login').innerHTML = "Invalid Username or Password!";
+			    	}
+	    		}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	
+	//Call the signup servlet and make sure the given fields are valid
+	function signupJs(){
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.open("POST", "Signup?sign_email=" + document.getElementById('sign_email').value + 
+	    		"&sign_uname=" + document.getElementById('sign_uname').value + 
+	    		"&subm_pwd="+ document.getElementById('subm_pwd').value, true);
+	    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	    xmlHttp.onreadystatechange = function() {
+	    	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    		if (xmlHttp.responseText == "email_taken") {
+	    			document.getElementById('email_taken').style.color = 'red';
+			    	document.getElementById('email_taken').innerHTML = "This email is already in use by another account!";
+			    	
+	    		}
+	    		
+	    		if (xmlHttp.responseText == "username_taken") {
+	    			document.getElementById('username_taken').style.color = 'red';
+			    	document.getElementById('username_taken').innerHTML = "This username is already in use by another account!";
+			    	
+	    		}
+	    		
+	 		    		
+		    	if(this.responseText == "valid") {
+		    		loginJs('sign_uname','subm_pwd');
+		    	} else if(this.responseText == "invalid") {
+		    		alert("invalid");
+		    	}
+	    	}
+	    }
+	    xmlHttp.send();
+	}
+	
+	//Validates text field is below the max length
+	function underMaxLength(checkField, outputField) {
+		if(document.getElementById(checkField).value.length >= 44) {
+   			document.getElementById(outputField).style.color = 'red';
+	    	document.getElementById(outputField).innerHTML = "Too long. Please shorten";
+	    	return false;
+		} else {
+			document.getElementById(outputField).innerHTML = "";
+			return true;
+		}
+	}
+	
+	
+</script>
+	
+<style>
+	body {
+		margin:0px; 
+	  	padding:0px;
+	  	font-family: Sans-serif;
+	}
+	
+	p {
+		font-weight: bold;
+		color: grey;
+	}
+	
+	h1 {
+		color: grey;
+	}
+	
+	hr {
+		width: 35%;
+		background-color: grey;
+		color: grey;
+		height:.5px;
+		border-width:0;
+	}	
+	
+	#mainpage {
+		margin-left: 10%;
+		margin-right: 10%;
+		margin-top: 50px;
+	}
+	
+
+	.text-box {
+		display: flex;
+	    width: 100%;
+	}
+	
+	input[type=text],
+	input[type=password],
+	input[type=email]{
+    	width: 90%;
+	}
+/*
+.split {
+  height: 80%;
+  width: 50%;
+  position: fixed;
+  z-index: 2;
+  top: 10;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+
+.left {
+  left: 0;
+  margin-left: 50px;
+  margin-right: 20%;
+}
+
+
+.right {
+  right: 0;
+}*/
+
+#leftsplit {
+  position: relative;
+  width: 50%;
+  float: left;
+  height: 100%;
+}
+
+#rightsplit {
+  position: relative;
+  width: 50%;
+  float: right;
+  height: 100%;
+}
+
+</style>
+</head>
+<body onload="navbar()">
+	
+	
+	<div id="nav-bar"></div>
+	
+	<div id="mainpage">
+		<div id="leftsplit" class="split left">
+			
+			<h1>Login</h1>
+			<form name="login" onsubmit="loginJs('uname','pwd');return false">
+				<p>Username:</p>
+				<div class="text-box"> 
+					<input type="text" id="uname" name="uname" required><br><br>
+				</div>
+				<p>Password:</p> 
+				<div class="text-box"> 
+			  		<input type="password" id="pwd" name="pwd"><br><br>
+			  	</div>
+		  		<input type="submit" value="Sign In"> <span id="invalid_login"></span><br>
+		  		
+			</form>
+		
+			<br><hr><br>
+		
+			<meta name="google-signin-client_id" content="682637906464-4qo16bkcpilsshsutf8lcngqj82nueor.apps.googleusercontent.com">
+			<div class="g-signin2" data-onsuccess="onSignIn"></div>
+		</div>
+		
+		<div id="rightsplit" class="split right">
+		<h1>Sign Up</h1>
+			<form name="signup" onsubmit="signupJs();return false">
+				<p>Email:</p>
+				<div class="text-box"> 
+					<input type="email" name="sign_email" id="sign_email" onkeyup="underMaxLength('sign_email','email_taken')" required><span id="email_taken"></span><br><br>
+				</div>
+				<p>Username:</p>
+				<div class="text-box"> 
+					<input type="text" name="sign_uname" id="sign_uname" onkeyup="underMaxLength('sign_uname','username_taken')" required><span id="username_taken"></span><br><br>
+				</div>
+				<p>Password:</p>
+			  	<div class="text-box"> 
+			  		<input type="password" id="subm_pwd" name="subm_pwd" onkeyup="verifyMatch();underMaxLength('subm_pwd','passToolong');" required><span id="passToolong"></span><br><br>
+				</div>
+				<p>Confirm Password:</p> <span id='message'></span><br>
+			  	<div class="text-box"> 
+			  		<input type="password" id="conf_subm_pwd" name="conf_subm_pwd" onkeyup='verifyMatch();' required><br><br>
+			  	</div>
+			  	
+			  	<input type="checkbox" name="sign_terms" value="terms-read" required>
+				<label for="terms"> I have read and agree to all terms of SalEats</label><br>
+			  	
+		  		<input type="submit" value="Create Account"><br>
+			</form>
+		</div>
+	</div>
+	
+	
+</body>
+</html>
